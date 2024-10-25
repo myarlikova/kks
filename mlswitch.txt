@@ -1,0 +1,627 @@
+Настройка коммутатора третьего уровня (multilayer)
+1 вариант: использование коммутатора для подключения оконечных устройств и маршрутизатора
+	1. Создание VLAn (в базе данных vlan)
+	2. Настройка портов на VLAN
+	3. Настройка ip адресов для каждого VLAN( шлюзы для оконечных устройств)
+	4. Включение ip routing
+	5/ Настройка маршрутизации по умолчанию (static route)
+
+Конфигурация настроенного коммутаторa
+Switch#show run
+Building configuration...
+
+Current configuration : 1782 bytes
+!
+version 16.3.2
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+ip routing
+!
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1/0/1
+ switchport access vlan 2
+!
+interface GigabitEthernet1/0/2
+ switchport access vlan 2
+!
+interface GigabitEthernet1/0/3
+ switchport access vlan 3
+!
+interface GigabitEthernet1/0/4
+ switchport access vlan 3
+!
+interface GigabitEthernet1/0/5
+!
+interface GigabitEthernet1/0/6
+!
+interface GigabitEthernet1/0/7
+!
+interface GigabitEthernet1/0/8
+!
+interface GigabitEthernet1/0/9
+!
+interface GigabitEthernet1/0/10
+!
+interface GigabitEthernet1/0/11
+!
+interface GigabitEthernet1/0/12
+!
+interface GigabitEthernet1/0/13
+!
+interface GigabitEthernet1/0/14
+!
+interface GigabitEthernet1/0/15
+!
+interface GigabitEthernet1/0/16
+!
+interface GigabitEthernet1/0/17
+!
+interface GigabitEthernet1/0/18
+!
+interface GigabitEthernet1/0/19
+!
+interface GigabitEthernet1/0/20
+!
+interface GigabitEthernet1/0/21
+!
+interface GigabitEthernet1/0/22
+!
+interface GigabitEthernet1/0/23
+!
+interface GigabitEthernet1/0/24
+!
+interface GigabitEthernet1/1/1
+ switchport access vlan 4
+!
+interface GigabitEthernet1/1/2
+!
+interface GigabitEthernet1/1/3
+!
+interface GigabitEthernet1/1/4
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan2
+ mac-address 0010.111a.b001
+ ip address 192.168.1.254 255.255.255.0
+!
+interface Vlan3
+ mac-address 0010.111a.b002
+ ip address 192.168.2.254 255.255.255.0
+!
+interface Vlan4
+ mac-address 0010.111a.b003
+ ip address 192.168.3.1 255.255.255.252
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 192.168.3.2 
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+!
+end
+
+
+
+
+
+2 вариант
+Использование коммутатора третьго уровня в качестве устройства, маршрутизирующей локальной сети
+	1. Создание VLAN 
+	2. Настройка подключения для оконечных устройств (если потребуется)
+	3. Присвоить vlam ip адреса
+	4. Включаем маршрутизацию (ip routing)
+	5. Переключаем порты, связанные с коммутаторами второго уровня в режим trunk
+	6. Настраиваем динамическую раздачу ардесов ip dhcp poool
+	7. Настраиваем коммутаторы второго уровня на нужные vlan
+
+Конфигурация настроенного коммутаторa
+
+Current configuration : 1953 bytes
+!
+version 16.3.2
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+!
+!
+!
+ip dhcp pool vlan2
+ network 192.168.2.0 255.255.255.0
+ default-router 192.168.2.254
+ dns-server 8.8.8.8
+ip dhcp pool server
+ network 192.168.4.0 255.255.255.0
+ default-router 192.168.4.254
+ dns-server 8.8.8.8
+ip dhcp pool vlan3
+ network 192.168.3.0 255.255.255.0
+ default-router 192.168.3.254
+ dns-server 8.8.8.8
+!
+!
+!
+no ip cef
+ip routing
+!
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1/0/1
+!
+interface GigabitEthernet1/0/2
+!
+interface GigabitEthernet1/0/3
+!
+interface GigabitEthernet1/0/4
+!
+interface GigabitEthernet1/0/5
+!
+interface GigabitEthernet1/0/6
+!
+interface GigabitEthernet1/0/7
+!
+interface GigabitEthernet1/0/8
+!
+interface GigabitEthernet1/0/9
+!
+interface GigabitEthernet1/0/10
+!
+interface GigabitEthernet1/0/11
+!
+interface GigabitEthernet1/0/12
+!
+interface GigabitEthernet1/0/13
+!
+interface GigabitEthernet1/0/14
+!
+interface GigabitEthernet1/0/15
+!
+interface GigabitEthernet1/0/16
+!
+interface GigabitEthernet1/0/17
+!
+interface GigabitEthernet1/0/18
+!
+interface GigabitEthernet1/0/19
+!
+interface GigabitEthernet1/0/20
+!
+interface GigabitEthernet1/0/21
+!
+interface GigabitEthernet1/0/22
+!
+interface GigabitEthernet1/0/23
+!
+interface GigabitEthernet1/0/24
+!
+interface GigabitEthernet1/1/1
+ switchport access vlan 4
+!
+interface GigabitEthernet1/1/2
+!
+interface GigabitEthernet1/1/3
+!
+interface GigabitEthernet1/1/4
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan2
+ mac-address 00e0.8fa7.8801
+ ip address 192.168.2.254 255.255.255.0
+!
+interface Vlan3
+ mac-address 00e0.8fa7.8802
+ ip address 192.168.3.254 255.255.255.0
+!
+interface Vlan4
+ mac-address 00e0.8fa7.8803
+ ip address 192.168.4.254 255.255.255.0
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+!
+end
+
+
+VLAN 39
+Switch#show run
+Building configuration...
+
+Current configuration : 2318 bytes
+!
+version 16.3.2
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+!
+!
+!
+ip dhcp pool vlan2
+ network 192.168.2.0 255.255.255.0
+ default-router 192.168.2.254
+ dns-server 8.8.8.8
+ip dhcp pool server
+ network 192.168.4.0 255.255.255.0
+ default-router 192.168.4.254
+ dns-server 8.8.8.8
+ip dhcp pool vlan3
+ network 192.168.3.0 255.255.255.0
+ default-router 192.168.3.254
+ dns-server 8.8.8.8
+ip dhcp pool vlan34
+ network 192.168.34.0 255.255.255.0
+ default-router 192.168.34.254
+ dns-server 8.8.8.8
+!
+!
+!
+no ip cef
+ip routing
+!
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1/0/1
+ switchport trunk allowed vlan 2-1001
+!
+interface GigabitEthernet1/0/2
+!
+interface GigabitEthernet1/0/3
+!
+interface GigabitEthernet1/0/4
+ switchport trunk allowed vlan 2-1001
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/5
+ switchport trunk allowed vlan 1-1001,1004-1005
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/6
+!
+interface GigabitEthernet1/0/7
+!
+interface GigabitEthernet1/0/8
+!
+interface GigabitEthernet1/0/9
+!
+interface GigabitEthernet1/0/10
+!
+interface GigabitEthernet1/0/11
+!
+interface GigabitEthernet1/0/12
+!
+interface GigabitEthernet1/0/13
+!
+interface GigabitEthernet1/0/14
+!
+interface GigabitEthernet1/0/15
+!
+interface GigabitEthernet1/0/16
+!
+interface GigabitEthernet1/0/17
+!
+interface GigabitEthernet1/0/18
+!
+interface GigabitEthernet1/0/19
+!
+interface GigabitEthernet1/0/20
+!
+interface GigabitEthernet1/0/21
+!
+interface GigabitEthernet1/0/22
+!
+interface GigabitEthernet1/0/23
+!
+interface GigabitEthernet1/0/24
+!
+interface GigabitEthernet1/1/1
+ switchport access vlan 4
+!
+interface GigabitEthernet1/1/2
+!
+interface GigabitEthernet1/1/3
+!
+interface GigabitEthernet1/1/4
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan2
+ mac-address 00e0.8fa7.8801
+ ip address 192.168.2.254 255.255.255.0
+!
+interface Vlan3
+ mac-address 00e0.8fa7.8802
+ ip address 192.168.3.254 255.255.255.0
+!
+interface Vlan4
+ mac-address 00e0.8fa7.8803
+ ip address 192.168.4.254 255.255.255.0
+!
+interface Vlan34
+ mac-address 00e0.8fa7.8804
+ ip address 192.168.34.254 255.255.255.0
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+!
+end
+
+
+vlan 34
+
+Switch#show run
+Building configuration...
+
+Current configuration : 1809 bytes
+!
+version 16.3.2
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+ip routing
+!
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1/0/1
+ switchport access vlan 2
+!
+interface GigabitEthernet1/0/2
+ switchport access vlan 2
+!
+interface GigabitEthernet1/0/3
+ switchport access vlan 3
+!
+interface GigabitEthernet1/0/4
+ switchport access vlan 3
+!
+interface GigabitEthernet1/0/5
+ switchport access vlan 39
+!
+interface GigabitEthernet1/0/6
+!
+interface GigabitEthernet1/0/7
+!
+interface GigabitEthernet1/0/8
+!
+interface GigabitEthernet1/0/9
+!
+interface GigabitEthernet1/0/10
+!
+interface GigabitEthernet1/0/11
+!
+interface GigabitEthernet1/0/12
+!
+interface GigabitEthernet1/0/13
+!
+interface GigabitEthernet1/0/14
+!
+interface GigabitEthernet1/0/15
+!
+interface GigabitEthernet1/0/16
+!
+interface GigabitEthernet1/0/17
+!
+interface GigabitEthernet1/0/18
+!
+interface GigabitEthernet1/0/19
+!
+interface GigabitEthernet1/0/20
+!
+interface GigabitEthernet1/0/21
+!
+interface GigabitEthernet1/0/22
+!
+interface GigabitEthernet1/0/23
+!
+interface GigabitEthernet1/0/24
+!
+interface GigabitEthernet1/1/1
+ switchport access vlan 4
+!
+interface GigabitEthernet1/1/2
+!
+interface GigabitEthernet1/1/3
+!
+interface GigabitEthernet1/1/4
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan2
+ mac-address 0010.111a.b001
+ ip address 192.168.1.254 255.255.255.0
+!
+interface Vlan3
+ mac-address 0010.111a.b002
+ ip address 192.168.2.254 255.255.255.0
+!
+interface Vlan4
+ mac-address 0010.111a.b003
+ ip address 192.168.3.1 255.255.255.252
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 192.168.3.2 
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+!
+end
+
